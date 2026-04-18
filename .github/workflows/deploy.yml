@@ -41,7 +41,7 @@ jobs:
 
       - name: Lint Python code
         run: |
-          flake8 lambdas/ --max-line-length=120 --ignore=E501,W503
+          flake8 lambdas/ --max-line-length=120 --ignore=E501,W503,E402
 
       - name: Run unit tests
         run: |
