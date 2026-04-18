@@ -1,0 +1,71 @@
+[
+  {
+    "id": 1,
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "age": 29,
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "age": 34,
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "name": "",
+    "email": "charlie@example.com",
+    "age": 45,
+    "status": "inactive"
+  },
+  {
+    "id": "not-a-number",
+    "name": "Diana Prince",
+    "email": "diana@example.com",
+    "age": 31,
+    "status": "pending"
+  },
+  {
+    "id": 5,
+    "name": "Eve Torres",
+    "email": "not-an-email",
+    "age": 28,
+    "status": "active"
+  },
+  {
+    "id": 6,
+    "name": "Frank Wright",
+    "email": "frank@example.com",
+    "age": 999,
+    "status": "deleted"
+  },
+  {
+    "name": "Grace Lee",
+    "email": "grace@example.com",
+    "age": 33,
+    "status": "active"
+  },
+  {
+    "id": 8,
+    "name": "Hank Pym",
+    "email": "hank@example.com",
+    "age": 50,
+    "status": "active"
+  },
+  {
+    "id": 9,
+    "name": "Iris West",
+    "email": "iris@example.com",
+    "age": 27,
+    "status": "active"
+  },
+  {
+    "id": 10,
+    "name": "Jake Long",
+    "email": "jake@example.com",
+    "age": -3,
+    "status": "active"
+  }
+]

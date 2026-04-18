@@ -1,0 +1,16 @@
+id,name,email,age,status
+1,Alice Johnson,alice@example.com,29,active
+2,Bob Smith,bob@example.com,34,active
+3,Charlie Brown,charlie.brown@example.com,45,inactive
+4,Diana Prince,diana@example.com,31,pending
+5,,missing-name@example.com,28,active
+6,Frank Castle,invalid-email-format,55,active
+7,Grace Hopper,grace@example.com,200,active
+8,Henry Ford,henry@example.com,42,unknown_status
+9,Ivy League,ivy@example.com,,active
+10,Jack Reacher,jack@example.com,35,active
+11,Kate Bishop,kate@example.com,27,active
+12,Leo Messi,leo@,38,active
+13,Maria Garcia,maria@example.com,-5,active
+14,Noah Williams,noah@example.com,22,inactive
+15,Olivia Chen,,30,active

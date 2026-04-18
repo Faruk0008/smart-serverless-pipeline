@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Serverless Automation Pipeline — Real-time monitoring dashboard for AWS Lambda, S3, DynamoDB processing pipelines">
+  <title>Serverless Pipeline — Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- ── Sidebar ────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">⚡</div>
+        <div class="sidebar-logo-text">
+          <span class="sidebar-logo-title">Pipeline</span>
+          <span class="sidebar-logo-subtitle">Serverless Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Overview</div>
+        <button class="nav-item active" data-page="dashboard" id="nav-dashboard">
+          <span class="nav-item-icon">📊</span>
+          Dashboard
+        </button>
+        <button class="nav-item" data-page="pipelines" id="nav-pipelines">
+          <span class="nav-item-icon">🔄</span>
+          Pipelines
+        </button>
+        <button class="nav-item" data-page="architecture" id="nav-architecture">
+          <span class="nav-item-icon">🏗️</span>
+          Architecture
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Operations</div>
+        <button class="nav-item" data-page="upload" id="nav-upload">
+          <span class="nav-item-icon">📤</span>
+          File Upload
+        </button>
+        <button class="nav-item" data-page="history" id="nav-history">
+          <span class="nav-item-icon">📋</span>
+          Processing History
+        </button>
+        <button class="nav-item" data-page="alerts" id="nav-alerts">
+          <span class="nav-item-icon">🔔</span>
+          Alerts
+          <span class="nav-item-badge" id="alert-count">3</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Monitoring</div>
+        <button class="nav-item" data-page="metrics" id="nav-metrics">
+          <span class="nav-item-icon">📈</span>
+          Metrics
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="env-badge dev">
+        <span class="env-badge-dot"></span>
+        Development
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ───────────────────────────────────────────── -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+        <h1 class="header-title" id="header-title">Dashboard</h1>
+        <span class="header-breadcrumb">Overview / <span>Real-time</span></span>
+      </div>
+      <div class="header-right">
+        <span class="text-xs text-muted text-mono" id="last-updated">Updated: --:--:--</span>
+        <button class="header-btn" id="refresh-btn" title="Refresh data">
+          <span id="refresh-icon">🔄</span> Refresh
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- DASHBOARD PAGE                                             -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section active" id="page-dashboard">
+        <!-- Stats Row -->
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card primary">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Total Processed</span>
+              <div class="stat-card-icon">📦</div>
+            </div>
+            <div class="stat-card-value" id="stat-total">0</div>
+            <div class="stat-card-change up">↑ <span id="stat-total-change">0%</span> vs last hour</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Success Rate</span>
+              <div class="stat-card-icon">✅</div>
+            </div>
+            <div class="stat-card-value" id="stat-success">0%</div>
+            <div class="stat-card-change up">↑ <span id="stat-success-change">0%</span></div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Avg Duration</span>
+              <div class="stat-card-icon">⏱️</div>
+            </div>
+            <div class="stat-card-value" id="stat-duration">0ms</div>
+            <div class="stat-card-change down">↓ <span id="stat-duration-change">0%</span> faster</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Errors (24h)</span>
+              <div class="stat-card-icon">⚠️</div>
+            </div>
+            <div class="stat-card-value" id="stat-errors">0</div>
+            <div class="stat-card-change down">↓ <span id="stat-errors-change">0%</span></div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">📈</span> Invocations Over Time</span>
+              <div class="card-actions">
+                <button class="btn btn-sm btn-outline" data-range="1h">1H</button>
+                <button class="btn btn-sm btn-outline active" data-range="24h">24H</button>
+                <button class="btn btn-sm btn-outline" data-range="7d">7D</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-invocations"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">🍩</span> Processing Distribution</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-distribution"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span class="card-title-icon">📋</span> Recent Activity</span>
+            <button class="btn btn-sm btn-outline" id="view-all-btn" data-page="history">View All →</button>
+          </div>
+          <div class="card-body no-padding">
+            <table class="data-table" id="recent-activity-table">
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Pipeline</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="recent-activity-body">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- PIPELINES PAGE                                             -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-pipelines">
+        <div class="pipeline-cards">
+          <div class="pipeline-card log">
+            <div class="pipeline-card-header">
+              <div class="pipeline-card-icon">📝</div>
+              <div>
+                <div class="pipeline-card-name">Log Analyzer</div>
+                <div class="pipeline-card-desc">Parses logs, extracts patterns</div>
+              </div>
+            </div>
+            <div class="pipeline-card-stats">
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-log-total">0</div>
+                <div class="pipeline-stat-label">Processed</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-log-errors">0</div>
+                <div class="pipeline-stat-label">Errors Found</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-log-avg">0ms</div>
+                <div class="pipeline-stat-label">Avg Duration</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-log-size">0 KB</div>
+                <div class="pipeline-stat-label">Data Processed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-card image">
+            <div class="pipeline-card-header">
+              <div class="pipeline-card-icon">🖼️</div>
+              <div>
+                <div class="pipeline-card-name">Image Resizer</div>
+                <div class="pipeline-card-desc">Creates thumbnail, medium, large</div>
+              </div>
+            </div>
+            <div class="pipeline-card-stats">
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-img-total">0</div>
+                <div class="pipeline-stat-label">Processed</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-img-saved">0%</div>
+                <div class="pipeline-stat-label">Space Saved</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-img-avg">0ms</div>
+                <div class="pipeline-stat-label">Avg Duration</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-img-variants">0</div>
+                <div class="pipeline-stat-label">Variants Created</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-card data">
+            <div class="pipeline-card-header">
+              <div class="pipeline-card-icon">📊</div>
+              <div>
+                <div class="pipeline-card-name">Data Validator</div>
+                <div class="pipeline-card-desc">Validates CSV/JSON schemas</div>
+              </div>
+            </div>
+            <div class="pipeline-card-stats">
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-data-total">0</div>
+                <div class="pipeline-stat-label">Validated</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-data-rate">0%</div>
+                <div class="pipeline-stat-label">Pass Rate</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-data-avg">0ms</div>
+                <div class="pipeline-stat-label">Avg Duration</div>
+              </div>
+              <div class="pipeline-stat">
+                <div class="pipeline-stat-value" id="pipe-data-records">0</div>
+                <div class="pipeline-stat-label">Records Checked</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline Errors Chart -->
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">⚡</span> Pipeline Performance</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-pipeline-perf"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">📊</span> Error Rate by Pipeline</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-error-rate"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- ARCHITECTURE PAGE                                          -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-architecture">
+        <div class="card mb-lg">
+          <div class="card-header">
+            <span class="card-title"><span class="card-title-icon">🏗️</span> System Architecture</span>
+          </div>
+          <div class="card-body">
+            <div class="arch-diagram">
+              <div class="arch-node">
+                <span class="arch-node-icon">📁</span>
+                <span class="arch-node-label">S3 Bucket</span>
+                <span class="arch-node-sublabel">File Upload</span>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-node">
+                <span class="arch-node-icon">📨</span>
+                <span class="arch-node-label">S3 Event</span>
+                <span class="arch-node-sublabel">Notification</span>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-node">
+                <span class="arch-node-icon">⚡</span>
+                <span class="arch-node-label">Lambda</span>
+                <span class="arch-node-sublabel">Processor</span>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-node">
+                <span class="arch-node-icon">🗄️</span>
+                <span class="arch-node-label">DynamoDB</span>
+                <span class="arch-node-sublabel">Results Store</span>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-node">
+                <span class="arch-node-icon">📊</span>
+                <span class="arch-node-label">CloudWatch</span>
+                <span class="arch-node-sublabel">Monitoring</span>
+              </div>
+              <span class="arch-arrow">→</span>
+              <div class="arch-node">
+                <span class="arch-node-icon">🔔</span>
+                <span class="arch-node-label">SNS</span>
+                <span class="arch-node-sublabel">Alerts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture details cards -->
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">📦</span> AWS Resources</span>
+            </div>
+            <div class="card-body">
+              <table class="data-table">
+                <thead><tr><th>Resource</th><th>Type</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>serverless-pipeline-uploads</td><td>S3 Bucket</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>serverless-pipeline-processed</td><td>S3 Bucket</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>log-analyzer</td><td>Lambda Function</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>image-resizer</td><td>Lambda Function</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>data-validator</td><td>Lambda Function</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>processing-results</td><td>DynamoDB Table</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                  <tr><td>pipeline-alerts</td><td>SNS Topic</td><td><span class="status-badge success"><span class="status-dot"></span> Active</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">🔒</span> Security Configuration</span>
+            </div>
+            <div class="card-body">
+              <table class="data-table">
+                <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>S3 Server-Side Encryption (AES-256)</td><td><span class="status-badge success"><span class="status-dot"></span> Enabled</span></td></tr>
+                  <tr><td>S3 Public Access Block</td><td><span class="status-badge success"><span class="status-dot"></span> Enabled</span></td></tr>
+                  <tr><td>S3 Versioning</td><td><span class="status-badge success"><span class="status-dot"></span> Enabled</span></td></tr>
+                  <tr><td>DynamoDB Encryption</td><td><span class="status-badge success"><span class="status-dot"></span> Enabled</span></td></tr>
+                  <tr><td>DynamoDB PITR</td><td><span class="status-badge success"><span class="status-dot"></span> Enabled</span></td></tr>
+                  <tr><td>IAM Least Privilege</td><td><span class="status-badge success"><span class="status-dot"></span> Enforced</span></td></tr>
+                  <tr><td>Lambda Env Encryption</td><td><span class="status-badge success"><span class="status-dot"></span> Default KMS</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- FILE UPLOAD PAGE                                           -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-upload">
+        <div class="card mb-lg">
+          <div class="card-header">
+            <span class="card-title"><span class="card-title-icon">📤</span> Upload Files to Pipeline</span>
+          </div>
+          <div class="card-body">
+            <!-- Folder selector -->
+            <div class="upload-folder-select mb-lg">
+              <label class="folder-option active" id="folder-logs">
+                <input type="radio" name="folder" value="logs" checked>
+                📝 logs/
+              </label>
+              <label class="folder-option" id="folder-images">
+                <input type="radio" name="folder" value="images">
+                🖼️ images/
+              </label>
+              <label class="folder-option" id="folder-data">
+                <input type="radio" name="folder" value="data">
+                📊 data/
+              </label>
+            </div>
+
+            <!-- Drop zone -->
+            <div class="upload-zone" id="upload-zone">
+              <span class="upload-zone-icon">☁️</span>
+              <div class="upload-zone-title">Drag & drop files here</div>
+              <div class="upload-zone-subtitle">
+                or <span class="upload-zone-browse" id="upload-browse">browse your files</span>
+              </div>
+              <input type="file" class="upload-input" id="upload-input" multiple>
+              <div class="text-xs text-muted mt-md">
+                logs/ → .log, .txt &nbsp;|&nbsp; images/ → .jpg, .png, .gif &nbsp;|&nbsp; data/ → .csv, .json
+              </div>
+            </div>
+
+            <!-- Upload queue -->
+            <div class="upload-queue" id="upload-queue"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- PROCESSING HISTORY PAGE                                    -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-history">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span class="card-title-icon">📋</span> Full Processing History</span>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-outline" id="filter-all">All</button>
+              <button class="btn btn-sm btn-outline" id="filter-log">📝 Logs</button>
+              <button class="btn btn-sm btn-outline" id="filter-image">🖼️ Images</button>
+              <button class="btn btn-sm btn-outline" id="filter-data">📊 Data</button>
+            </div>
+          </div>
+          <div class="card-body no-padding">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>File</th>
+                  <th>Pipeline</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>Details</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- ALERTS PAGE                                                -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-alerts">
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: var(--space-xl);">
+          <div class="stat-card danger">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Critical</span>
+              <div class="stat-card-icon">🔴</div>
+            </div>
+            <div class="stat-card-value" id="alert-critical">0</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Warnings</span>
+              <div class="stat-card-icon">🟡</div>
+            </div>
+            <div class="stat-card-value" id="alert-warnings">0</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-card-header">
+              <span class="stat-card-label">Resolved</span>
+              <div class="stat-card-icon">🟢</div>
+            </div>
+            <div class="stat-card-value" id="alert-resolved">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span class="card-title-icon">🔔</span> Alert Feed</span>
+          </div>
+          <div class="card-body" id="alerts-feed">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <!-- METRICS PAGE                                               -->
+      <!-- ═══════════════════════════════════════════════════════════ -->
+      <section class="page-section" id="page-metrics">
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">⏱️</span> Lambda Duration (P50, P95, P99)</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-latency"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">🧊</span> Cold Starts vs Warm Starts</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-cold-starts"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="charts-grid mt-lg">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">💰</span> Estimated Cost (Last 7 Days)</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-cost"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title"><span class="card-title-icon">📦</span> Memory Utilization</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="chart-memory"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
