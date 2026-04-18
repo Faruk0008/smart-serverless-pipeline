@@ -24,12 +24,12 @@ try:
         parse_s3_event,
         store_processing_result,
     )
+    logger = get_structured_logger("log-analyzer")
 except ImportError:
     # When deployed as a standalone Lambda, shared utils are bundled
     import logging
     logging.warning("Could not import shared utils — running in standalone mode")
-
-logger = get_structured_logger("log-analyzer")
+    logger = logging.getLogger("log-analyzer")
 
 # ── Log Patterns ─────────────────────────────────────────────────────────────
 

@@ -26,18 +26,17 @@ try:
         store_processing_result,
         upload_s3_object,
     )
+    logger = get_structured_logger("image-resizer")
 except ImportError:
     import logging
     logging.warning("Could not import shared utils — running in standalone mode")
+    logger = logging.getLogger("image-resizer")
 
-# Pillow for image processing
+# Pillow for image processing — must be in deployment package or Lambda Layer
 try:
     from PIL import Image
 except ImportError:
-    # Pillow must be included in the Lambda deployment package or layer
-    raise ImportError("Pillow is required. Include it in requirements.txt or use a Lambda Layer.")
-
-logger = get_structured_logger("image-resizer")
+    raise ImportError("Pillow is required. Run: pip install Pillow -t lambdas/image_resizer/")
 
 # ── Configuration ────────────────────────────────────────────────────────────
 

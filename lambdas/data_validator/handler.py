@@ -27,11 +27,11 @@ try:
         parse_s3_event,
         store_processing_result,
     )
+    logger = get_structured_logger("data-validator")
 except ImportError:
     import logging
     logging.warning("Could not import shared utils — running in standalone mode")
-
-logger = get_structured_logger("data-validator")
+    logger = logging.getLogger("data-validator")
 
 # ── Validation Rules ─────────────────────────────────────────────────────────
 
