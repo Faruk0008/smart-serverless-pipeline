@@ -324,7 +324,7 @@ def lambda_handler(event, context):
         key = record["key"]
         file_size = record["size"]
 
-        log_event(logger, "INFO", f"Validating data file", bucket=bucket, key=key, size=file_size)
+        log_event(logger, "INFO", "Validating data file", bucket=bucket, key=key, size=file_size)
 
         try:
             with Timer() as timer:
@@ -340,7 +340,7 @@ def lambda_handler(event, context):
                 else:
                     validation = {
                         "fileType": "unknown",
-                        "error": f"Unsupported file type. Expected .csv or .json",
+                        "error": "Unsupported file type. Expected .csv or .json",
                         "totalRecords": 0,
                         "validRecords": 0,
                         "invalidRecords": 0,
@@ -380,7 +380,7 @@ def lambda_handler(event, context):
             results.append({"file": key, "result_id": result_id, "status": status})
 
         except Exception as e:
-            log_event(logger, "ERROR", f"Failed to validate data file", error=str(e), key=key)
+            log_event(logger, "ERROR", "Failed to validate data file", error=str(e), key=key)
             store_processing_result(
                 processing_type="data_validation",
                 source_file=key,

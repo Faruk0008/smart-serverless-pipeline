@@ -149,7 +149,7 @@ def lambda_handler(event, context):
         key = record["key"]
         file_size = record["size"]
 
-        log_event(logger, "INFO", f"Processing log file", bucket=bucket, key=key, size=file_size)
+        log_event(logger, "INFO", "Processing log file", bucket=bucket, key=key, size=file_size)
 
         try:
             with Timer() as timer:
@@ -194,7 +194,7 @@ def lambda_handler(event, context):
             results.append({"file": key, "result_id": result_id, "status": status})
 
         except Exception as e:
-            log_event(logger, "ERROR", f"Failed to process log file", error=str(e), key=key)
+            log_event(logger, "ERROR", "Failed to process log file", error=str(e), key=key)
             store_processing_result(
                 processing_type="log_analysis",
                 source_file=key,

@@ -132,7 +132,7 @@ def lambda_handler(event, context):
             results.append({"file": key, "status": "error", "error": f"Unsupported format: {file_ext}"})
             continue
 
-        log_event(logger, "INFO", f"Processing image", bucket=bucket, key=key, size=file_size)
+        log_event(logger, "INFO", "Processing image", bucket=bucket, key=key, size=file_size)
 
         try:
             with Timer() as timer:
@@ -142,8 +142,6 @@ def lambda_handler(event, context):
 
                 # Generate filename base
                 filename = Path(key).stem
-                folder = Path(key).parent.as_posix()
-
                 # Resize to each target size
                 resize_results = {}
                 for size_name, target_px in RESIZE_TARGETS.items():
@@ -209,7 +207,7 @@ def lambda_handler(event, context):
             results.append({"file": key, "result_id": result_id, "status": "success"})
 
         except Exception as e:
-            log_event(logger, "ERROR", f"Failed to process image", error=str(e), key=key)
+            log_event(logger, "ERROR", "Failed to process image", error=str(e), key=key)
             store_processing_result(
                 processing_type="image_resize",
                 source_file=key,
