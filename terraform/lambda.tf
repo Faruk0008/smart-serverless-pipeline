@@ -219,10 +219,10 @@ resource "aws_lambda_function" "log_analyzer" {
 
   environment {
     variables = {
-      TABLE_NAME      = aws_dynamodb_table.processing_results.name
-      BUCKET_NAME     = aws_s3_bucket.upload_bucket.id
-      ENVIRONMENT     = var.environment
-      FUNCTION_NAME   = "log-analyzer"
+      TABLE_NAME    = aws_dynamodb_table.processing_results.name
+      BUCKET_NAME   = aws_s3_bucket.upload_bucket.id
+      ENVIRONMENT   = var.environment
+      FUNCTION_NAME = "log-analyzer"
     }
   }
 
@@ -271,10 +271,10 @@ resource "aws_lambda_function" "data_validator" {
 
   environment {
     variables = {
-      TABLE_NAME      = aws_dynamodb_table.processing_results.name
-      BUCKET_NAME     = aws_s3_bucket.upload_bucket.id
-      ENVIRONMENT     = var.environment
-      FUNCTION_NAME   = "data-validator"
+      TABLE_NAME    = aws_dynamodb_table.processing_results.name
+      BUCKET_NAME   = aws_s3_bucket.upload_bucket.id
+      ENVIRONMENT   = var.environment
+      FUNCTION_NAME = "data-validator"
     }
   }
 
@@ -286,28 +286,28 @@ resource "aws_lambda_function" "data_validator" {
 # =============================================================================
 
 resource "aws_lambda_permission" "allow_s3_log_analyzer" {
-  statement_id  = "AllowS3InvokeLogAnalyzer"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.log_analyzer.function_name
-  principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.upload_bucket.arn
+  statement_id   = "AllowS3InvokeLogAnalyzer"
+  action         = "lambda:InvokeFunction"
+  function_name  = aws_lambda_function.log_analyzer.function_name
+  principal      = "s3.amazonaws.com"
+  source_arn     = aws_s3_bucket.upload_bucket.arn
   source_account = data.aws_caller_identity.current.account_id
 }
 
 resource "aws_lambda_permission" "allow_s3_image_resizer" {
-  statement_id  = "AllowS3InvokeImageResizer"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.image_resizer.function_name
-  principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.upload_bucket.arn
+  statement_id   = "AllowS3InvokeImageResizer"
+  action         = "lambda:InvokeFunction"
+  function_name  = aws_lambda_function.image_resizer.function_name
+  principal      = "s3.amazonaws.com"
+  source_arn     = aws_s3_bucket.upload_bucket.arn
   source_account = data.aws_caller_identity.current.account_id
 }
 
 resource "aws_lambda_permission" "allow_s3_data_validator" {
-  statement_id  = "AllowS3InvokeDataValidator"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.data_validator.function_name
-  principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.upload_bucket.arn
+  statement_id   = "AllowS3InvokeDataValidator"
+  action         = "lambda:InvokeFunction"
+  function_name  = aws_lambda_function.data_validator.function_name
+  principal      = "s3.amazonaws.com"
+  source_arn     = aws_s3_bucket.upload_bucket.arn
   source_account = data.aws_caller_identity.current.account_id
 }

@@ -221,7 +221,7 @@ resource "aws_cloudwatch_dashboard" "pipeline_dashboard" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda Invocations"
+          title = "Lambda Invocations"
           metrics = [
             ["AWS/Lambda", "Invocations", "FunctionName", aws_lambda_function.log_analyzer.function_name, { label = "Log Analyzer" }],
             ["AWS/Lambda", "Invocations", "FunctionName", aws_lambda_function.image_resizer.function_name, { label = "Image Resizer" }],
@@ -240,7 +240,7 @@ resource "aws_cloudwatch_dashboard" "pipeline_dashboard" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda Errors"
+          title = "Lambda Errors"
           metrics = [
             ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.log_analyzer.function_name, { label = "Log Analyzer", color = "#d13212" }],
             ["AWS/Lambda", "Errors", "FunctionName", aws_lambda_function.image_resizer.function_name, { label = "Image Resizer", color = "#ff9900" }],
@@ -259,7 +259,7 @@ resource "aws_cloudwatch_dashboard" "pipeline_dashboard" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda Duration (ms)"
+          title = "Lambda Duration (ms)"
           metrics = [
             ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.log_analyzer.function_name, { label = "Log Analyzer", stat = "Average" }],
             ["AWS/Lambda", "Duration", "FunctionName", aws_lambda_function.image_resizer.function_name, { label = "Image Resizer", stat = "Average" }],
@@ -277,7 +277,7 @@ resource "aws_cloudwatch_dashboard" "pipeline_dashboard" {
         width  = 12
         height = 6
         properties = {
-          title   = "Lambda Throttles & Concurrent Executions"
+          title = "Lambda Throttles & Concurrent Executions"
           metrics = [
             ["AWS/Lambda", "Throttles", "FunctionName", aws_lambda_function.log_analyzer.function_name, { label = "Throttles - Log Analyzer" }],
             ["AWS/Lambda", "ConcurrentExecutions", "FunctionName", aws_lambda_function.log_analyzer.function_name, { label = "Concurrency - Log Analyzer" }]
